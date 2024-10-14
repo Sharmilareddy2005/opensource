@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background */
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #ffffff; /* White background for card */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Soft shadow */
+        }
+        h1 {
+            text-align: center;
+        }
+        .nav-tabs .nav-link {
+            border: none; /* Remove border */
+        }
+        .co-admin-item, .student-item {
+            padding: 10px;
+            border: 1px solid #007bff; /* Border color */
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #e7f1ff; /* Light blue background */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-group {
+            margin-left: 10px;
+        }
+        .btn {
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#co-admin-management">Co-admin Management</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#student-management">Student Management</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="co-admin-management" class="tab-pane fade show active">
+                <h3>Add Co-admin</h3>
+                <button class="btn btn-primary" onclick="showAddCoAdminModal()">Add Co-admin</button>
+                <h4 class="mt-4">Existing Co-admins</h4>
+                <div id="coadmin-list"></div>
+                <h4 class="mt-4">All HODs</h4>
+                <select class="form-control mb-2" id="hods-dropdown"></select>
+            </div>
+            <div id="student-management" class="tab-pane fade">
+                <h3>Add Student</h3>
+                <input type="text" class="form-control mb-2" placeholder="Student Name" id="student-name">
+                <input type="text" class="form-control mb-2" placeholder="Roll Number" id="roll-number">
+                <select class="form-control mb-2" id="student-branch">
+                    <option value="">Select Branch</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                    <option value="Electrical Engineering">Electrical Engineering</option>
+                    <option value="Civil Engineering">Civil Engineering</option>
+                </select>
+                <button class="btn btn-primary mb-3" onclick="addStudent()">Add Student</button>
+                <h4 class="mt-4">Existing Students</h4>
+                <div id="student-list"></div>
+                <h4 class="mt-4">All Students</h4>
+                <select class="form-control mb-2" id="all-students-dropdown"></select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Co-admin -->
+    <div class="modal" id="addCoAdminModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Co-admin</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control mb-2" placeholder="Co-admin Username" id="coadmin-username">
+                    <select class="form-control mb-2" id="coadmin-branch">
+                        <option value="">Select Branch</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        <option value="Electrical Engineering">Electrical Engineering</option>
+                        <option value="Civil Engineering">Civil Engineering</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="addCoAdmin()">Add Co-admin</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const coAdmins = [];
+        const students = [];
+        const hods = [
+            { name: "Dr. Smith", branch: "Computer Science" },
+            { name: "Dr. Johnson", branch: "Mechanical Engineering" },
+            { name: "Dr. Lee", branch: "Electrical Engineering" },
+            { name: "Dr. Brown", branch: "Civil Engineering" }
+        ];
+
+        function showAddCoAdminModal() {
+            $('#addCoAdminModal').modal('show'); // Show the modal
+        }
+
+        function addCoAdmin() {
+            const username = document.getElementById('coadmin-username').value.trim();
+            const branch = document.getElementById('coadmin-branch').value;
+
+            if (username && branch) {
+                const coAdmin = {
+                    id: Date.now(),
+                    username: username,
+                    branch: branch,
+                    code: generateCode() // Generate a unique code
+                };
+
+                coAdmins.push(coAdmin);
+                alert('Co-admin added successfully. Code: ' + coAdmin.code);
+
+                // Clear input fields
+                document.getElementById('coadmin-username').value = '';
+                document.getElementById('coadmin-branch').value = '';
+
+                // Update co-admin list
+                updateCoAdminList();
+                $('#addCoAdminModal').modal('hide'); // Hide the modal
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+
+        function updateCoAdminList() {
+            const coadminList = document.getElementById('coadmin-list');
+            coadminList.innerHTML = ''; // Clear existing list
+
+            coAdmins.forEach(coAdmin => {
+                const coAdminDiv = document.createElement('div');
+                coAdminDiv.classList.add('co-admin-item');
+                coAdminDiv.innerHTML = `
+                    <div>
+                        <strong>${coAdmin.username}</strong> - ${coAdmin.branch} (Code: ${coAdmin.code})
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-warning btn-sm" onclick="editCoAdmin(${coAdmin.id})">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteCoAdmin(${coAdmin.id})">Delete</button>
+                    </div>
+                `;
+                coadminList.appendChild(coAdminDiv);
+            });
+            updateHODsDropdown(); // Update HODs dropdown
+        }
+
+        function updateHODsDropdown() {
+            const hodsDropdown = document.getElementById('hods-dropdown');
+            hodsDropdown.innerHTML = ''; // Clear existing options
+
+            hods.forEach(hod => {
+                const option = document.createElement('option');
+                option.text = hod.name + " - " + hod.branch;
+                hodsDropdown.add(option);
+            });
+        }
+
+        function generateCode() {
+            return Math.random().toString(36).substr(2, 8).toUpperCase(); // Generate a random code
+        }
+
+        function editCoAdmin(id) {
+            const coAdmin = coAdmins.find(coAdmin => coAdmin.id === id);
+            if (coAdmin) {
+                document.getElementById('coadmin-username').value = coAdmin.username;
+                document.getElementById('coadmin-branch').value = coAdmin.branch;
+                deleteCoAdmin(id); // Remove the old co-admin after fetching details
+                $('#addCoAdminModal').modal('show'); // Show the modal for editing
+            }
+        }
+
+        function deleteCoAdmin(id) {
+            const index = coAdmins.findIndex(coAdmin => coAdmin.id === id);
+            if (index > -1) {
+                coAdmins.splice(index, 1); // Remove co-admin from array
+                alert('Co-admin deleted successfully');
+                updateCoAdminList(); // Refresh the list
+            }
+        }
+
+        function addStudent() {
+            const name = document.getElementById('student-name').value.trim();
+            const rollNo = document.getElementById('roll-number').value.trim();
+            const branch = document.getElementById('student-branch').value;
+
+            if (name && rollNo && branch) {
+                const student = {
+                    id: Date.now(),
+                    name: name,
+                    rollNo: rollNo,
+                    branch: branch
+                };
+
+                students.push(student);
+                alert('Student added successfully.');
+
+                // Clear input fields
+                document.getElementById('student-name').value = '';
+                document.getElementById('roll-number').value = '';
+                document.getElementById('student-branch').value = '';
+
+                // Update student list
+                updateStudentList();
+                updateAllStudentsDropdown(); // Update dropdown for all students
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+
+        function updateStudentList() {
+            const studentList = document.getElementById('student-list');
+            studentList.innerHTML = ''; // Clear existing list
+
+            students.forEach(student => {
+                const studentDiv = document.createElement('div');
+                studentDiv.classList.add('student-item');
+                studentDiv.innerHTML = `
+                    <div>
+                        <strong>${student.name}</strong> - Roll No: ${student.rollNo} - ${student.branch}
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-warning btn-sm" onclick="editStudent(${student.id})">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">Delete</button>
+                    </div>
+                `;
+                studentList.appendChild(studentDiv);
+            });
+        }
+
+        function updateAllStudentsDropdown() {
+            const allStudentsDropdown = document.getElementById('all-students-dropdown');
+            allStudentsDropdown.innerHTML = ''; // Clear existing options
+
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.id; // Set value to student ID
+                option.text = `${student.name} - Roll No: ${student.rollNo}`;
+                allStudentsDropdown.add(option);
+            });
+        }
+
+        function editStudent(id) {
+            const student = students.find(student => student.id === id);
+            if (student) {
+                document.getElementById('student-name').value = student.name;
+                document.getElementById('roll-number').value = student.rollNo;
+                document.getElementById('student-branch').value = student.branch;
+                deleteStudent(id); // Remove the old student after fetching details
+            }
+        }
+
+        function deleteStudent(id) {
+            const index = students.findIndex(student => student.id === id);
+            if (index > -1) {
+                students.splice(index, 1); // Remove student from array
+                alert('Student deleted successfully');
+                updateStudentList(); // Refresh the list
+                updateAllStudentsDropdown(); // Refresh dropdown
+            }
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

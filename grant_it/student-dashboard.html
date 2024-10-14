@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            background-color: #e9ecef; /* Light grey background */
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            margin-top: 20px;
+            border-radius: 10px;
+            background-color: #fff; /* White background for the card */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            padding: 20px;
+        }
+        .nav-tabs .nav-link {
+            border: none; /* Remove border */
+            border-radius: 5px 5px 0 0; /* Rounded corners */
+            margin-right: 5px;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #007bff; /* Bootstrap primary color */
+            color: white; /* White text for active tab */
+        }
+        .request-item {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+        .approved {
+            background-color: #d4edda; /* Light green */
+            border: 1px solid #c3e6cb; /* Darker green border */
+        }
+        .pending {
+            background-color: #fff3cd; /* Light yellow */
+            border: 1px solid #ffeeba; /* Darker yellow border */
+        }
+        h3 {
+            margin-top: 20px;
+        }
+        button {
+            width: 100%; /* Full-width buttons */
+        }
+        input, textarea {
+            border-radius: 5px; /* Rounded input fields */
+            border: 1px solid #ced4da; /* Border color */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Student Dashboard</h1>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#request-permission">Request Permission</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#request-history">Request History</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="request-permission" class="tab-pane fade show active">
+                <h3>Request Permission</h3>
+                <input type="text" class="form-control mb-2" placeholder="Subject" id="subject">
+                <textarea class="form-control mb-2" id="permission-details" rows="4" placeholder="Permission Details"></textarea>
+                <button class="btn btn-primary" onclick="sendRequest()">Send</button>
+                <button class="btn btn-secondary" onclick="cancelRequest()">Cancel</button>
+            </div>
+            <div id="request-history" class="tab-pane fade">
+                <h3>Request History</h3>
+                <div id="history-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const requestHistory = [];
+
+        function sendRequest() {
+            const subject = document.getElementById('subject').value.trim();
+            const details = document.getElementById('permission-details').value.trim();
+
+            if (subject && details) {
+                const request = {
+                    subject: subject,
+                    details: details,
+                    status: Math.random() > 0.5 ? 'approved' : 'pending'
+                };
+
+                requestHistory.push(request);
+                alert('Request sent successfully');
+
+                document.getElementById('subject').value = '';
+                document.getElementById('permission-details').value = '';
+
+                updateRequestHistory();
+            } else {
+                alert('Please fill in both fields.');
+            }
+        }
+
+        function cancelRequest() {
+            alert('Cancelled');
+            document.getElementById('subject').value = '';
+            document.getElementById('permission-details').value = '';
+        }
+
+        function updateRequestHistory() {
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+
+            requestHistory.forEach(request => {
+                const requestDiv = document.createElement('div');
+                requestDiv.classList.add('request-item', request.status === 'approved' ? 'approved' : 'pending');
+                requestDiv.innerHTML = `<strong>${request.subject}</strong><br>${request.details}<br><em>Status: ${request.status.charAt(0).toUpperCase() + request.status.slice(1)}</em>`;
+                historyList.appendChild(requestDiv);
+            });
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

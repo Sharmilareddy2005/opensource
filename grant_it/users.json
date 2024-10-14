@@ -1,0 +1,22 @@
+{
+    "users": [
+        { "username": "admin", "password": "adminpass", "role": "admin" },
+        { "username": "hod1", "password": "hodpass", "role": "co-admin" },
+        { "username": "student1", "password": "studentpass", "role": "student" }
+    ]
+}
+{
+    "requests": [
+        { "username": "student1", "subject": "Leave Request", "details": "Requesting leave for 2 days", "status": "approved" },
+        { "username": "student1", "subject": "Permission for Gatepass", "details": "Need permission for gatepass this weekend", "status": "rejected" },
+        { "username": "student2", "subject": "Medical Leave", "details": "Requesting medical leave", "status": "approved" }
+    ]
+}
+{
+    "requests": [
+        { "username": "student1", "coAdmin": "hod1", "subject": "Leave Request", "details": "Requesting leave for 2 days", "status": "approved" },
+        { "username": "student1", "coAdmin": "hod1", "subject": "Permission for Gatepass", "details": "Need permission for gatepass this weekend", "status": "rejected" },
+        { "username": "student2", "coAdmin": "hod1", "subject": "Medical Leave", "details": "Requesting medical leave", "status": "approved" },
+        { "username": "student3", "coAdmin": "hod2", "subject": "Class Absence", "details": "Was sick last week", "status": "pending" }
+    ]
+}
